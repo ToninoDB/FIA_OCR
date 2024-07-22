@@ -1,0 +1,17 @@
+23/07 - Tecnica HOG Bocciata
+    Per la fase di feature extraction si è pensato di utilizzare la tecnica HOG (della libreria
+    skimage) la quale calcola il gradiente di un'immagine e tramite due parametri "pixels_per_cell" 
+    e "cells_per_block" calcola il "descrittore" di ogni immagine: una sorta di valore che sta ad 
+    indicare il "contorno" dell'immagine che sta elaborando, per poi darlo al classificatore in fase 
+    di addestramento.
+    Si è notato che la tecnica HOG per questo tipo di dataset si è rivelata fallimentare poichè
+    non è in grado di calcolare al meglio i descrittori delle immagini in quanto risultano per il 95%
+    delle volte uguali a 0.0 e ciò non permette un corretto addestramento da parte del 
+    classificatore SVM. Si è tentato anche di giocare con i possibili valori dei due parametri
+    fondamentali ma i risultati o non variano per niente o variano veramente di molto poco.
+    (mostrare i casi di test con le classi 0, 1, 37, 45 [prendi le immagini])
+
+    Ora si cerca di trovare una nuova tecnica di feature extraction, magari qualcosa basata sui
+    contorni delle immagini tipo l'"Algoritmo di Canny".
+    Prestare particolare attenzione sulla trasformazione delle immagini da "a colori" a 
+    "scala di grigi".
