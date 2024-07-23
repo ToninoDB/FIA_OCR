@@ -15,3 +15,16 @@
     contorni delle immagini tipo l'"Algoritmo di Canny".
     Prestare particolare attenzione sulla trasformazione delle immagini da "a colori" a 
     "scala di grigi".
+
+
+24/07 - Test varie tecniche di preprocessing
+    Per la fase di preprocessing si è testato una semplice normalizzazione dei valori del file csv 
+    contenente tutti i dati sia di train che di test. Il file è composto da tante righe quanti sono
+    i dati e tante colonne quanti sono i pixel (28x28=784) + una colonna per la label del dato.
+    I valori di partenza vanno tra lo 0 e il 255 mentre i valori normalizzati tra 0 e 1.
+
+    Ho testato con un semplice SVM della libreria sklearn, utilizzando diverse funzioni di kernel:
+    con la lineare si è raggiunta un'accuracy pari al 74%, mentre con la RBF pari a 84% (vedi
+    i risultati).
+
+    Evoluzioni future: applicare l'ensemble learning e vedere se migliorano le prestazioni.
