@@ -9,7 +9,7 @@
     delle volte uguali a 0.0 e ciò non permette un corretto addestramento da parte del 
     classificatore SVM. Si è tentato anche di giocare con i possibili valori dei due parametri
     fondamentali ma i risultati o non variano per niente o variano veramente di molto poco.
-    (mostrare i casi di test con le classi 0, 1, 37, 45 [prendi le immagini])
+    (mostrare i casi di test con le classi 0, 1, 37, 45 [prendi le immagini], angelo)
 
     Ora si cerca di trovare una nuova tecnica di feature extraction, magari qualcosa basata sui
     contorni delle immagini tipo l'"Algoritmo di Canny".
@@ -25,6 +25,70 @@
 
     Ho testato con un semplice SVM della libreria sklearn, utilizzando diverse funzioni di kernel:
     con la lineare si è raggiunta un'accuracy pari al 74%, mentre con la RBF pari a 84% (vedi
-    i risultati).
+    i risultati, angelo e/o alfonso).
 
     Evoluzioni future: applicare l'ensemble learning e vedere se migliorano le prestazioni.
+
+25/07 - Test con e senza ensemble learning
+    Si è effettuato l'esecuzione dell'intero modello sia con che senza ensemble learning. L'accuracy
+    del modello senza ensemble learning risulta essere dell'84%. Invece, l'accuracy del modello con
+    ensemble learning risulta essere lo stesso valore dell'84%. Tutto ciò non risulta chiaro, infatti
+    si sta cercando di variare qualche parametro sia del metodo della libreria sklearn che ha 
+    permesso la realizzazione della tecnica one-vs-all, OneVsRestClassifier(): il parametro aggiunto
+    è "n_jobs=-1" che permette di parallelizzare l'addestramento e il testing del modello. Inoltre
+    è stata aggiunta la creazione di un seed di generazione così da evitare il verificarsi di 
+    risultati diversi ad ogni run del software. 
+
+    Evoluzioni future: attendere questa nuova run del software. Se non cambia nulla si procederà
+                       a cambiare i parametri della funzione di kernel quali: 
+                       param_dist = {
+                                    'estimator__C': expon(scale=100),
+                                    'estimator__gamma': expon(scale=.1),
+                                    'estimator__kernel': ['rbf']
+                                    }
+
+26/07 - Risultato test con parallelizzazione
+    La parallelizzazione è risultata molto efficiente dal punto di vista temporale, infatti da circa
+    15h di addestramento siamo passati a poco più di 4h però dal punto di vista dell'accuracy non
+    è cambiato nulla. Ora si sta provando con i diversi iperparametri, come descritti nel report 
+    precedente e si cercherà di migliorare un pò la situazione per poi tentare di creare una
+    interfaccia grafica e provare il modello al runtime.
+
+
+23/08 - Passaggio alla GridSearchCV
+    Dopo numerosi tentativi di ricerda degli iperparametri migliori per il modello SVM tramite la
+    Bayesian Optimization abbiamo notato solo problemi di esecuzione: il codice non terminava mai 
+    nonostante le numerose modifiche sia agli intervalli degli iperparametri sia diminuendo il
+    numero di iterazioni da eseguire. Sono passato alla ricerca degli iperparametri tramite 
+    GridSearchCV con 3-fold su tutto il dataset. La grigli dei valori usati è la seguente:
+
+            C:[0.1, 1, 10]
+            gamma: [0.001, 0.01, 0.1]
+
+    Ovviamente tutto ciò è fatto in parallelo ec on il classificatore OneVsRestClassifier.
+    Attenderemo la fine dell'esecuzione e vedremo se l'accuracy migliora rispetto alla precedente 
+    (circa 84%) e nell'eventualità la dimensione della griglia degli iperparametri.
+
+    {Le immagini estratte vengono dai file ubyte dal sito EMNIST.}
+    {L'esecuzione in parallelo risulta troppo onerosa per la macchina utilizzata creando una decina
+    di processi paralleli che saturano la RAM impedendo ai processi base della macchina di eseguire
+    le loro task.}
+
+
+29/08 - Uso classificatore SVM semplice per la ricerca degli iperparametri
+    L'esecuzione del OneVsRestClassifier ha richiesto troppo tempo come al solito per ciò ho deciso
+    di optare per un'altra soluzione.
+    Ho utilizzato un sottoinsieme bilanciato del dataset (circa il 10%) per effettuare la ricerca
+    degli iperparametri con la GridSearchCVperò utilizzando un semplice classificatore SVM.
+    La parallelizzazione è stata riservata solo per il modello di classificazione e non anche per la
+    GridSearchCV per evitare i problemi avuti in passato. 
+    L'esecuzione è andata a buon fine dando come risultato i parametri:
+
+                               C: 10       gamma: 0.01
+
+    con un accuracy del 76% (inutile ai nostri scopi).
+
+    Questi valori sono stati infine utilizzati per il OneVsRestClassifier per l'addestramento
+    su tutto il dataset completo.
+
+    Risultato finale: incremento dell'accuracy del 2%, passando da un 84% ad un 86%.
